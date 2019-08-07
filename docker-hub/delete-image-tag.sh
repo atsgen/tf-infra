@@ -6,7 +6,7 @@
  
  
 # filter repo pattern that you do not want to touch
-FILTER='developer-sandbox'
+FILTER=''
  
 # delete empty repo
 DELETE_EMPTY_REPO='True'
@@ -43,7 +43,11 @@ done
 
 echo
 echo "**************************************************************************"
-echo "Deleting images with TAG $TAG, from Domain $DOMAIN. while skipping $FILTER"
+if [[ -z "$FILTER" ]]; then
+  echo "Deleting images with TAG $TAG, from Domain $DOMAIN."
+else
+  echo "Deleting images with TAG $TAG, from Domain $DOMAIN. while skipping $FILTER"
+fi
 echo "**************************************************************************"
 echo
 echo
@@ -72,7 +76,7 @@ REPO_LIST=$(curl -s -H "Authorization: JWT ${TOKEN}" https://hub.docker.com/v2/r
 # iterate the list of repos to delete the mentioned tag for all repositories
 for i in ${REPO_LIST}
 do
-  if [[ $i != *$FILTER* ]]; then
+  if [[ -z "$FILTER" || $i != *$FILTER* ]]; then
     # perform delete for the given tag
     RESULT=$(curl -s -X DELETE -H "Authorization: JWT ${TOKEN}" https://cloud.docker.com/v2/repositories/${DOMAIN}/${i}/tags/${TAG}/ | jq -r .detail)
     if [[ ! -z "$RESULT" ]]; then
