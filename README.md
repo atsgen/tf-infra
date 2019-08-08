@@ -9,3 +9,6 @@ Utilites/Scripts under docker-hub directory expects system to have curl and jq i
 * *delete-image-tag.sh* - Script to manage deletion of deprecated tags for all the repositories listed under tungstenfabric namespace/domain. This uses dockerhub user authentication to trigger deletes.
   * One can trigger delete of tag r5.0 for example using ./delete-image-tag.sh -t r5.0
   * detailed options are available under -h help option
+* *retag-image.sh* - Script to manage retagging for all repositories under tungstenfabric domain. This uses docker hub user authentication to trigger retagging.
+  * Retagging from 'R5.1-2019-07-24' to 'r5.1.1' for example can be triggered by ./retag-image.sh -o R5.1-2019-07-24 -t r5.1.1 
+  * detailed options are available under the -h help option
