@@ -67,8 +67,6 @@ if [[ ! -z "$FILTER" ]]; then
   STR="$STR | grep -v $FILTER"
 fi
 
-echo $STR
-
 # build list of container images
 RES=( $(eval $STR | awk '{split($0, a, " "); print a[1]":"a[2]}') )
 for element in "${RES[@]}"
