@@ -12,20 +12,17 @@ OLD_TAG=''
 # new tag with which image needs to be tagged
 TAG=''
  
-DOMAIN='tungstenfabric'
+DOMAIN='atsgen'
  
 # A POSIX variable
 OPTIND=1         # Reset in case getopts has been used previously in the shell.
-
-UNAME=''
-UPASS=''
 
 usage() {
   echo "$0   Usage: "
   echo "         -h  help"
   echo "         -o <TAG> old image tag eg. r5.1"
   echo "         -t <TAG> new image tag to be created eg. r5.1"
-  echo "         -d <domain> domain eg. tungstenfabric"
+  echo "         -d <domain> domain eg. atsgen"
 }
 
 while getopts "h?o:t:d:n:f:" opt; do
@@ -61,28 +58,14 @@ if [[ $OLD_TAG == $TAG ]]; then
    exit 0
 fi
 
-echo
-echo
-echo "Please use your Docker Hub ID to Authenticate"
-echo "*********************************************"
-echo -n "Username: " 
-read UNAME
-echo -n "Password: "
-read -s UPASS
-echo
-
-TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'${UNAME}'", "password": "'${UPASS}'"}' https://hub.docker.com/v2/users/login/ | jq -r .token)
-
-if [[ -z "$TOKEN" || "null" == "$TOKEN" ]]; then
-  echo "failed to authenticate for user $UNAME"
-  exit 1
-fi
+source $(dirname $0)/common/login_token.sh
+source $(dirname $0)/common/functions.sh
 
 shift $((OPTIND-1))
 
 [ "${1:-}" = "--" ] && shift
 
-# get list of repositories for tungstenfabric domain
+# get list of repositories for domain
 REPO_LIST=$(curl -s -H "Authorization: JWT ${TOKEN}" https://hub.docker.com/v2/repositories/${DOMAIN}/?page_size=1000 | jq -r '.results|.[]|.name')
  
 for i in ${REPO_LIST}
