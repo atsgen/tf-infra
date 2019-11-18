@@ -4,6 +4,7 @@
 # Maintainer: prabhjot@atsgen.com
 #
 # filter repo pattern that you do not want to touch
+set -e
 FILTER=''
  
 # old tag of the image
@@ -66,7 +67,7 @@ shift $((OPTIND-1))
 [ "${1:-}" = "--" ] && shift
 
 # get list of repositories for domain
-REPO_LIST=$(curl -s -H "Authorization: JWT ${TOKEN}" https://hub.docker.com/v2/repositories/${DOMAIN}/?page_size=1000 | jq -r '.results|.[]|.name')
+get_repos
  
 for i in ${REPO_LIST}
 do
@@ -77,8 +78,6 @@ do
     if [[ ! -z "${VERSION}" && "null" != "$VERSION" ]]; then
       echo "Got manifest for ${DOMAIN}/${i}:${OLD_TAG}"
       curl -s -X PUT -H "Content-Type: application/vnd.docker.distribution.manifest.v2+json" -H "Authorization: Bearer ${PTOKEN}" -d "${MANIFEST}" https://registry.hub.docker.com/v2/${DOMAIN}/${i}/manifests/${TAG}
-    else
-      echo "Tag notfound for ${DOMAIN}/${i}:${OLD_TAG}"
     fi
   fi
 done

@@ -3,6 +3,8 @@
 # script to manage deletion of deprecated image:tags from docker hub
 # Maintainer: prabhjot@atsgen.com
 #
+
+set -e
  
  
 # filter repo pattern that you do not want to touch
